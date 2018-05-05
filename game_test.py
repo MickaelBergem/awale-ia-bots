@@ -4,6 +4,7 @@ from .game import Game
 
 
 class GameTest(TestCase):
+
     def test_init(self):
         """ init_game should fill the right number of seeds """
         game = Game()

@@ -7,6 +7,7 @@ GAME_NAME = "Aveijieux"
 
 
 class BoardWindow(Gtk.Window):
+
     def __init__(self, game):
         self.game = game
         Gtk.Window.__init__(self, title=GAME_NAME)
@@ -29,6 +30,7 @@ class BoardWindow(Gtk.Window):
                 self.boxB.pack_end(self.buttons[id], True, True, 0)
 
     def on_zone_clicked_call(self, zone_id):
+
         def click(btn_self):
             print(f"Zone #{zone_id} clicked.")
             self.game.play(zone_id)

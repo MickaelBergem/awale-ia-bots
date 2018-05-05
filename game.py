@@ -34,7 +34,7 @@ class Game(object):
         self.zones = [5] * NB_ZONES
         for zone_id in random.sample(population=range(NB_ZONES), k=3):
             self.zones[zone_id] -= 1
-        logging.warning("Game initiated. Board state: %s", self.game_str())
+        logging.info("Game initiated. Board state: %s", self.game_str())
 
     def game_str(self):
         """ Return the board state as a string """
@@ -79,7 +79,7 @@ class Game(object):
             receiving_zone = (receiving_zone + 1) % NB_ZONES
             seeds_to_distribute -= 1
             self.zones[receiving_zone] += 1
-        logging.warning("Player %s played zone %d", player, zone_id)
+        logging.info("Player %s played zone %d", player, zone_id)
         # After a move, check if seeds can be removed
         self.auto_empty(end_zone=receiving_zone, player=player)
 
@@ -96,7 +96,7 @@ class Game(object):
             return
 
         if self.zones[end_zone] in [2, 3]:
-            logging.warning("Emptying zone %d (%d seeds)", end_zone, self.zones[end_zone])
+            logging.info("Emptying zone %d (%d seeds)", end_zone, self.zones[end_zone])
             self.zones[end_zone] = 0
             # Repeat from the preceding zone
             self.auto_empty((end_zone - 1) % NB_ZONES, player)
