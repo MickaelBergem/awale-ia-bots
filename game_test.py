@@ -40,14 +40,12 @@ class GameTest(TestCase):
         self.assertTrue(game.zone_belongs_to_player(11, 'B'))
 
         self.assertEqual(game.victory_reached(), False)
-        game.zones = [1] * 6 + [0] * 6
+        game = Game([1] * 6 + [0] * 6)
         self.assertEqual(game.victory_reached(), 'B')
 
     def test_rules(self):
         """ Gameplay check """
-        game = Game()
-        # Force zone configuration
-        game.zones = [5, 4, 3, 5, 1, 0] + [2, 3, 4, 5, 6, 7]
+        game = Game([5, 4, 3, 5, 1, 0] + [2, 3, 4, 5, 6, 7])
         game.play(7, 'B')
         self.assertEqual(
             game.zones,
@@ -66,20 +64,17 @@ class GameTest(TestCase):
 
     def test_autoempty(self):
         """ Check the auto_empty mechanism """
-        game = Game()
-        game.zones = [1] * 12
+        game = Game([1] * 12)
         game.play(3, 'A')
         self.assertEqual(game.zones[0:6], [1, 1, 1, 0, 0, 1])
 
-        game.zones = [1] * 12
+        game = Game([1] * 12)
         game.play(5, 'A')
         self.assertEqual(game.zones, [1, 1, 1, 1, 1, 0, 2, 1, 1, 1, 1, 1])
 
     def test_victory(self):
         """ Check the victory_reached method """
-        game = Game()
-        # Force zone configuration
-        game.zones = [1] * 6 + [5, 1, 1, 1, 1, 1]
+        game = Game([1] * 6 + [5, 1, 1, 1, 1, 1])
         self.assertFalse(game.victory_reached())
         game.play(0, 'A')
         self.assertFalse(game.victory_reached())

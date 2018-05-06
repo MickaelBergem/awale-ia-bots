@@ -22,8 +22,8 @@ class Game(object):
         B B B B B B
     """
 
-    def __init__(self):
-        self.zones = [0] * NB_ZONES
+    def __init__(self, zones=None):
+        self._zones = zones.copy() if zones else [0] * NB_ZONES
 
     def init_game(self):
         """
@@ -31,14 +31,14 @@ class Game(object):
 
         The initial state is 5 seeds per zone, minus 3 picked in 3 different and random zones.
         """
-        self.zones = [5] * NB_ZONES
+        self._zones = [5] * NB_ZONES
         for zone_id in random.sample(population=range(NB_ZONES), k=3):
-            self.zones[zone_id] -= 1
+            self._zones[zone_id] -= 1
         logging.info("Game initiated. Board state: %s", self.game_str())
 
     def game_str(self):
         """ Return the board state as a string """
-        return self.board_str(self.zones)
+        return self.board_str(self._zones)
 
     @staticmethod
     def board_str(zones):
@@ -53,7 +53,7 @@ class Game(object):
     @property
     def board(self):
         """ Return the state of the board. """
-        return self.zones.copy()
+        return self._zones.copy()
 
     def play(self, zone_id, player=None):
         """
@@ -70,15 +70,15 @@ class Game(object):
         if not self.zone_belongs_to_player(zone_id, player):
             raise ValueError("Cannot access this zone, you can only choose a zone if you side.")
 
-        seeds_to_distribute = self.zones[zone_id]
+        seeds_to_distribute = self._zones[zone_id]
         if seeds_to_distribute == 0:
             raise ValueError("This zone is already empty.")
-        self.zones[zone_id] = 0
+        self._zones[zone_id] = 0
         receiving_zone = zone_id
         while seeds_to_distribute > 0:
             receiving_zone = (receiving_zone + 1) % NB_ZONES
             seeds_to_distribute -= 1
-            self.zones[receiving_zone] += 1
+            self._zones[receiving_zone] += 1
         logging.info("Player %s played zone %d", player, zone_id)
         # After a move, check if seeds can be removed
         self.auto_empty(end_zone=receiving_zone, player=player)
@@ -95,9 +95,9 @@ class Game(object):
         if not self.zone_belongs_to_player(end_zone, player):
             return
 
-        if self.zones[end_zone] in [2, 3]:
-            logging.info("Emptying zone %d (%d seeds)", end_zone, self.zones[end_zone])
-            self.zones[end_zone] = 0
+        if self._zones[end_zone] in [2, 3]:
+            logging.info("Emptying zone %d (%d seeds)", end_zone, self._zones[end_zone])
+            self._zones[end_zone] = 0
             # Repeat from the preceding zone
             self.auto_empty((end_zone - 1) % NB_ZONES, player)
 
@@ -111,13 +111,18 @@ class Game(object):
 
     def victory_reached(self):
         """ Return False if no player won, or the name ('A'/'B') of the winning player """
-        if self.zones[:HALF_ZONES] == [0] * HALF_ZONES:
+        if self._zones[:HALF_ZONES] == [0] * HALF_ZONES:
             return 'A'
-        if self.zones[HALF_ZONES:] == [0] * HALF_ZONES:
+        if self._zones[HALF_ZONES:] == [0] * HALF_ZONES:
             return 'B'
 
         # No winner yet
         return False
+
+    @property
+    def zones(self):
+        """ Zones getter """
+        return self._zones.copy()
 
 
 if __name__ == '__main__':

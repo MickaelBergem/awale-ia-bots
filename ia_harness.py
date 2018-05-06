@@ -40,19 +40,20 @@ class Harness(object):
 
     def average(self, N=100):
         """ Run N games between the bots and show the performance """
+        print(f"Running {N} iterations of A ({self.ia1_class.strategy}) against B ({self.ia2_class.strategy})")
         with Pool(THREAD_COUNT) as pool:
             stats = Counter(pool.map(self.one_game, range(N)))
         print(f"{N} iterations complete, scores={stats}")
         winner, count = stats.most_common()[0]
         win_ratio = round(count / N * 100, 1)
-        perf = round((count - (N / 2)) / N * 100, 1)
+        perf = round((count - (N / 2)) / N * 100)
         strategy = (self.ia1_class if winner == 'A' else self.ia2_class).strategy
         print(f"Agent {winner} (strategy={strategy}) won in {win_ratio}% of the tests, performance is {perf}% better.")
         return stats
 
 
 if __name__ == '__main__':
-    from bots import RandomIA
+    import bots
 
-    harness = Harness(RandomIA, RandomIA)
-    harness.average(5000)
+    harness = Harness(bots.RandomIA, bots.Naive1Bot)
+    harness.average(20000)
