@@ -46,7 +46,7 @@ class Harness(object):
         print(f"{N} iterations complete, scores={stats}")
         winner, count = stats.most_common()[0]
         win_ratio = round(count / N * 100, 1)
-        perf = round((count - (N / 2)) / N * 100)
+        perf = round((2 * count - N) / (N - count) * 100)
         strategy = (self.ia1_class if winner == 'A' else self.ia2_class).strategy
         print(f"Agent {winner} (strategy={strategy}) won in {win_ratio}% of the tests, performance is {perf}% better.")
         return stats
@@ -55,5 +55,5 @@ class Harness(object):
 if __name__ == '__main__':
     import bots
 
-    harness = Harness(bots.RandomIA, bots.Naive1Bot)
+    harness = Harness(bots.RandomIA, bots.MostRightBot)
     harness.average(20000)
