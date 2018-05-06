@@ -55,5 +55,5 @@ class Harness(object):
 if __name__ == '__main__':
     import bots
 
-    harness = Harness(bots.RandomIA, bots.MostRightBot)
+    harness = Harness(bots.RandomIA, bots.Energy1Bot)
     harness.average(20000)
